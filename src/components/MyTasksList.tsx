@@ -1,13 +1,7 @@
 import React from 'react';
 import { FlatList, TouchableOpacity, View, Text, StyleSheet, FlatListProps } from 'react-native';
 
-function FlatListHeaderComponent() {
-  return (
-    <View>
-      <Text style={styles.header}>Minhas tasks</Text>
-    </View>
-  )
-}
+
 
 interface MyTasksListProps {
   tasks: {
@@ -15,11 +9,45 @@ interface MyTasksListProps {
     title: string;
     done: boolean;
   }[];
+  mode: boolean;
   onPress: (id: number) => void;
   onLongPress: (id: number) => void;
 }
 
-export function MyTasksList({ tasks, onLongPress, onPress }: MyTasksListProps) {
+function setButton (item, mode) {
+  if (!mode) {
+    return item.done ? styles.taskMarkerDone : styles.taskMarker
+  }
+
+  return item.done ? [styles.taskMarkerDone, {backgroundColor: '#FF79C6'}] : [styles.taskMarker, {borderColor: '#FF79C6'}]
+}
+
+function setBackground (item, mode) {
+  if (!mode) {
+    return item.done ? styles.taskButtonDone : styles.taskButton
+  }
+
+  return item.done ? [styles.taskButtonDone, {backgroundColor: 'transparent'}] : [styles.taskButton, , {backgroundColor: 'transparent'}]
+}
+
+function setText (item, mode) {
+  if (!mode) {
+    return item.done ? styles.taskTextDone : styles.taskText
+  }
+
+  return item.done ? [styles.taskTextDone, {color: 'gray', backgroundColor: 'rgba(25, 61, 223, 0.1)'}] : [styles.taskText, {color: '#FF79C6'}]
+}
+
+export function MyTasksList({ tasks, onLongPress, onPress, mode }: MyTasksListProps) {
+
+  function FlatListHeaderComponent() {
+    return (
+      <View>
+        <Text style={mode === true ? [styles.header, {color: '#FF79C6'}] : styles.header }>Minhas tasks</Text>
+      </View>
+    )
+  }
+
   return (
     <FlatList
       data={tasks}
@@ -31,14 +59,14 @@ export function MyTasksList({ tasks, onLongPress, onPress }: MyTasksListProps) {
             activeOpacity={0.7}
             onPress={() => onPress(item.id)} 
             onLongPress={() => onLongPress(item.id)} 
-            style={item.done ? styles.taskButtonDone : styles.taskButton}
+            style={setBackground(item, mode)}
             >
             <View 
               testID={`marker-${index}`}
-              style={item.done ? styles.taskMarkerDone : styles.taskMarker}
+              style={setButton(item, mode)}
               />
             <Text 
-              style={item.done ? styles.taskTextDone : styles.taskText}
+              style={setText(item, mode)}
             >
               {item.title}
             </Text>

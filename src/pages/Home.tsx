@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 import { Header } from '../components/Header';
 import { MyTasksList } from '../components/MyTasksList';
@@ -12,6 +13,7 @@ interface Task {
 
 export function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [mode, setMode] = useState<boolean>(false);
 
   function handleAddTask(newTaskTitle: string) {
     if(newTaskTitle === '') {
@@ -46,16 +48,16 @@ export function Home() {
   }
 
   return (
-    <>
-      <Header />
+    <View style={mode ? {backgroundColor: '#333', flex: 1} : {backgroundColor: '#fff'}}>
+      <Header  mode={mode} setMode={setMode} />
+      <TodoInput addTask={handleAddTask} mode={mode} />
 
-      <TodoInput addTask={handleAddTask} />
-
-      <MyTasksList 
+      <MyTasksList
+        mode={mode}
         tasks={tasks} 
         onPress={handleMarkTaskAsDone} 
         onLongPress={handleRemoveTask} 
       />
-    </>
+    </View>
   )
 }
